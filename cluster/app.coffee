@@ -5,6 +5,7 @@ routes = require('./routes')
 app = module.exports = express.createServer()
 
 app.configure(() ->
+  app.use(express.logger())
   app.use(express.bodyParser())
   app.use(express.methodOverride())
   app.use(app.router)
@@ -20,10 +21,14 @@ app.configure('production', () ->
 )
 
 app.get('/', routes.index)
+app.get('/seppuku', (req, res) ->
+  res.send("It has been an honor to serve you, master.")
+  process.send({jsonrpc: "2.0", method: 'kill', params: [process.pid]})
+)
 
 app.listen(3000, () ->
   # console.log("Express server listening on port %d in %s mode", 
   #   app.address().port, 
   #   app.settings.env)
-  process.send({logLevel: "debug", cmd: "starting", pid: process.pid})
+  process.send({cmd: "starting", pid: process.pid})
 )
