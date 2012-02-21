@@ -1,10 +1,10 @@
 cluster = require('cluster')
-CPUCOUNT = require('os').cpus().length
-WorkerPool = require("./lib/workerpool")
-Workers = new WorkerPool({maxCount: CPUCOUNT})
 
 if cluster.isMaster
-  Workers.spawnAll()
+  WorkerPool = require("./lib/workerpool")
+  Workers = new WorkerPool()
+  
+  Workers.start()
   process.on("SIGINT", Workers.end)
   process.on('exit', Workers.end)
   
@@ -12,4 +12,4 @@ if cluster.isMaster
     console.log(Workers.list())
   ), 1000)
 else
-  require("./app")
+  require("./app") # TODO: make this parametric?
